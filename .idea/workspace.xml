@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c5431d98-e1e4-4bf8-87dc-6f2a0bf63eb7" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/bgphandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bgphandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/bgphandler.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +83,7 @@
       <updated>1604623305234</updated>
       <workItem from="1604623306810" duration="580000" />
       <workItem from="1604638344603" duration="14595000" />
-      <workItem from="1604657734737" duration="111000" />
+      <workItem from="1604657734737" duration="513000" />
     </task>
     <task id="LOCAL-00001" summary="lfs">
       <created>1604655673136</created>
@@ -201,10 +201,10 @@
     </state>
     <state x="48" y="279" key="Vcs.Push.Dialog.v2/0.23.1792.1034@0.23.1792.1034" timestamp="1604655678835" />
     <state x="48" y="279" key="Vcs.Push.Dialog.v2/0.23.1792.1036@0.23.1792.1036" timestamp="1604656126056" />
-    <state x="100" y="123" width="1592" height="836" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1604657845707">
+    <state x="321" y="114" width="1592" height="836" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1604658247629">
       <screen x="0" y="23" width="1792" height="1036" />
     </state>
-    <state x="100" y="123" width="1592" height="836" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.23.1792.1036@0.23.1792.1036" timestamp="1604657845707" />
+    <state x="321" y="114" width="1592" height="836" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.23.1792.1036@0.23.1792.1036" timestamp="1604658247629" />
     <state x="100" y="123" width="1592" height="836" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1604657845707">
       <screen x="0" y="23" width="1792" height="1036" />
     </state>
