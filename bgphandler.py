@@ -45,4 +45,4 @@ async def handle(elem):
 
 for elem in bgpStream:
     print(elem)
-    asyncio.run(handle())
+    asyncio.run(handle(elem))
