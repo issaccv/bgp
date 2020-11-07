@@ -1,8 +1,8 @@
+import time
+
 import pybgpstream
 import redis
-import asyncio
-from asgiref.sync import sync_to_async
-
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # init bgpStream
 bgpStream = pybgpstream.BGPStream(record_type='ribs')
@@ -42,10 +42,15 @@ async def handle(elem):
     for i in range(0,len(ases)-1):
         print(i)
         pipe.sadd(node_prefix.format(ases[i]), ases[i+1])
-    await sync_to_async(pipe.execute)()
+    pipe.execute()
     return
 
-
+t=ThreadPoolExecutor(max_workers=15)
+count=0
 for elem in bgpStream:
     print(elem)
-    asyncio.get_event_loop().run_until_complete(handle(elem))
+    count+=1
+    print(count)
+    t.submit(handle,elem)
+t.shutdown()
+print(time.time())
