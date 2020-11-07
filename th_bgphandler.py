@@ -7,12 +7,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # init bgpStream
 bgpStream = pybgpstream.BGPStream(record_type='ribs')
 bgpStream.stream.set_data_interface('singlefile')
-bgpStream.stream.set_data_interface_option('singlefile', 'rib-file', 'rib.20201002.0200.bz2')
+bgpStream.stream.set_data_interface_option('singlefile', 'rib-file', 'route-views.amsix.bz2')
 bgpStream.stream.set_data_interface_option('singlefile', 'rib-type', 'mrt')
 bgpStream.stream.add_interval_filter(0, 0)
 
 # init redis
-redisPool = redis.ConnectionPool(host='localhost', port=6379, db=0)
+redisPool = redis.ConnectionPool(host='localhost', port=6379, db=1)
 rp = redis.Redis(connection_pool=redisPool)
 
 nodeAll = 'node_all'
@@ -32,7 +32,7 @@ node_prefix = 'node_asn_{:s}'
 #       pipe.sadd(node_prefix.format(ases[i-1]),val)
 #    pipe.execute()
 
-async def handle(elem):
+def handle(elem):
     ases = elem.fields["as-path"].split(" ")
     if len(ases) == 1:
         return
@@ -46,9 +46,14 @@ async def handle(elem):
 
 t=ThreadPoolExecutor(max_workers=15)
 count=0
+last=0
 for elem in bgpStream:
     print(elem)
     count+=1
-    t.submit(handle,elem)
+    print(count)
+    if(count-last>100000):
+        time.sleep(1)
+        last=count
+    t.submit(handle,(elem))
 t.shutdown()
 print(time.time())
