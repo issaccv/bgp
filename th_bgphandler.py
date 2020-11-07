@@ -40,7 +40,6 @@ async def handle(elem):
     pipe = rp.pipeline()
     pipe.sadd(nodeAll, *ases)
     for i in range(0,len(ases)-1):
-        print(i)
         pipe.sadd(node_prefix.format(ases[i]), ases[i+1])
     pipe.execute()
     return
@@ -50,7 +49,6 @@ count=0
 for elem in bgpStream:
     print(elem)
     count+=1
-    print(count)
     t.submit(handle,elem)
 t.shutdown()
 print(time.time())
