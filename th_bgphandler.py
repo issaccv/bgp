@@ -12,7 +12,7 @@ bgpStream.stream.set_data_interface_option('singlefile', 'rib-type', 'mrt')
 bgpStream.stream.add_interval_filter(0, 0)
 
 # init redis
-redisPool = redis.ConnectionPool(host='localhost', port=6379, db=1)
+redisPool = redis.ConnectionPool(host='localhost', port=6379, db=0)
 rp = redis.Redis(connection_pool=redisPool)
 
 nodeAll = 'node_all'
@@ -32,27 +32,30 @@ node_prefix = 'node_asn_{:s}'
 #       pipe.sadd(node_prefix.format(ases[i-1]),val)
 #    pipe.execute()
 
-def handle(elem):
-    ases = elem.fields["as-path"].split(" ")
-    if len(ases) == 1:
-        return
+def handle(elems):
     pipe = rp.pipeline()
-    pipe.sadd(nodeAll, *ases)
-    for i in range(0,len(ases)-1):
-        pipe.sadd(node_prefix.format(ases[i]), ases[i+1])
+    for elem in elems:
+        ases = elem.fields["as-path"].split(" ")
+        if len(ases) == 1:
+            return
+        pipe.sadd(nodeAll, *ases)
+        for i in range(0, len(ases) - 1):
+            pipe.sadd(node_prefix.format(ases[i]), ases[i + 1])
     pipe.execute()
     return
 
-t=ThreadPoolExecutor(max_workers=15)
+
+t=ThreadPoolExecutor(max_workers=20)
 count=0
 last=0
+elems=[]
 for elem in bgpStream:
     print(elem)
     count+=1
     print(count)
-    if(count-last>100000):
-        time.sleep(1)
-        last=count
-    t.submit(handle,(elem))
+    elems.append(elem)
+    if len(elems) >10 :
+        t.submit(handle,elems)
+        elems=[]
 t.shutdown()
 print(time.time())
