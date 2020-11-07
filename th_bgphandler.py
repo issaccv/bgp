@@ -36,7 +36,6 @@ def handle(elem):
     ases = elem.fields["as-path"].split(" ")
     if len(ases) == 1:
         return
-    print(ases)
     pipe = rp.pipeline()
     pipe.sadd(nodeAll, *ases)
     for i in range(0,len(ases)-1):
