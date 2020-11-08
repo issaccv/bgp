@@ -1,5 +1,8 @@
+import time
+
 import pybgpstream
 import redis
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # init bgpStream
 bgpStream = pybgpstream.BGPStream(record_type='ribs')
@@ -29,19 +32,30 @@ node_prefix = 'node_asn_{:s}'
 #       pipe.sadd(node_prefix.format(ases[i-1]),val)
 #    pipe.execute()
 
-def handle(elem):
-    ases = elem.fields["as-path"].split(" ")
-    if len(ases) == 1:
-        return
+def handle(elems):
     pipe = rp.pipeline()
-    pipe.sadd(nodeAll, *ases)
-    for i in range(0,len(ases)-1):
-        pipe.sadd(node_prefix.format(ases[i]), ases[i+1])
+    for elem in elems:
+        ases = elem.fields["as-path"].split(" ")
+        if len(ases) == 1:
+            return
+        pipe.sadd(nodeAll, *ases)
+        for i in range(0, len(ases) - 1):
+            pipe.sadd(node_prefix.format(ases[i]), ases[i + 1])
     pipe.execute()
     return
 
+
+t=ThreadPoolExecutor(max_workers=20)
 count=0
+last=0
+elems=[]
 for elem in bgpStream:
     print(elem)
-    print(++count)
-    handle(elem)
+    count+=1
+    print(count)
+    elems.append(elem)
+    if len(elems) >10 :
+        t.submit(handle,elems)
+        elems=[]
+t.shutdown()
+print(time.time())
