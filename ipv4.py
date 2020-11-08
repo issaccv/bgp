@@ -40,23 +40,77 @@ d_order=sorted(kvdict.items(),key=lambda x:x[1],reverse=True)  # 按字典集合
 d_order=d_order[:1000]
 
 
+nodeset=set()
+nodeset_exist=set()
+strlist=[]
 pipe=rp.pipeline()
 for key in d_order :
     pipe.smembers(key[0])
+    nodeset.add(key[0][12:])
+    strlist.append(key[0][12:])
 result=pipe.execute()
 
 ty="force"
 nodes=[]
 links=[]
-for i in keys:
-    nodes.append(node(i))
+
 
 for i in range(0, len(result)):
     for val in result[i]:
-        links.append(link(keys[i],node_prefix.format(val.decode())))
+        val=val.decode()
+        if val in nodeset:
+            nodeset_exist.add(val)
+            links.append(link(strlist[i], val))
+
+for val in nodeset:
+    if val in nodeset_exist:
+        nodes.append(node(val))
+
 
 g=Graph(ty,nodes,links)
-with open('data.json', 'w') as f:
+with open('ipv4.js', 'w') as f:
     json.dump(g,default=lambda obj:obj.__dict__, fp=f,indent=4)
 
 
+v6node=[]
+v6nodeset=set()
+v6nodeset_exist=set()
+pipe=rp.pipeline()
+for val in strlist:
+    pipe.sismember("node_all_v6",val)
+result=pipe.execute()
+
+
+for i in range(0,len(result)):
+    if result[i]:
+        v6node.append(strlist[i])
+    else:
+        print(strlist[i])
+
+
+pipe=rp.pipeline()
+for key in v6node :
+    pipe.smembers('node_asn_v6_{:s}'.format(key))
+    v6nodeset.add(key)
+result=pipe.execute()
+
+ty="force"
+nodes=[]
+links=[]
+
+
+for i in range(0, len(result)):
+    for val in result[i]:
+        val=val.decode()
+        if val in v6nodeset:
+            v6nodeset_exist.add(val)
+            links.append(link(v6node[i], val))
+
+for val in v6nodeset:
+    if val in v6nodeset_exist:
+        nodes.append(node(val))
+
+
+g=Graph(ty,nodes,links)
+with open('ipv6.js', 'w') as f:
+    json.dump(g,default=lambda obj:obj.__dict__, fp=f,indent=4)

@@ -21,7 +21,7 @@ class Graph :
 redisPool = redis.ConnectionPool(host='localhost', port=6379, db=1)
 rp = redis.Redis(connection_pool=redisPool)
 
-keys=rp.keys("node_asn_v4*")
+keys=rp.keys("node_asn_v6*")
 keys = [x.decode('utf-8') for x in keys]
 
 node_prefix = 'node_asn_{:s}'
@@ -68,7 +68,7 @@ for val in nodeset:
 
 
 g=Graph(ty,nodes,links)
-with open('ipv4.js', 'w') as f:
+with open('ipv6.js', 'w') as f:
     json.dump(g,default=lambda obj:obj.__dict__, fp=f,indent=4)
 
 
